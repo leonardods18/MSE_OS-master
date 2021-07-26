@@ -49,9 +49,7 @@ extern "C" {
 
 /*==================[typedef]================================================*/
 
-/*==================[external data declaration]==============================*/
 
-/*==================[external functions declaration]=========================*/
 
 /** @brief main function
  * @return main function should never return
