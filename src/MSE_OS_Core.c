@@ -7,24 +7,44 @@ static osControl control_OS;
 
 //----------------------------------------------------------------------------------
 
-/*************************************************************************************************
-	 *  @brief Inicializa las tareas que correran en el OS.
-     *
-     *  @details
-     *   Inicializa una tarea para que pueda correr en el OS implementado.
-     *   Es necesario llamar a esta funcion para cada tarea antes que inicie
-     *   el OS.
-     *
-	 *  @param *entryPoint		Puntero a la tarea que se desea inicializar.
-	 *  @param *task			Puntero a la estructura de control que sera utilizada para
-	 *  						la tarea que se esta inicializando.
-	 *  @return     None.
-***************************************************************************************************/
+     //   Esta funcion no deberia accederse bajo ningun concepto, porque ninguna tarea del OS
+     //   debe retornar. Si lo hace, es un comportamiento anormal y debe ser tratado.
+
+void __attribute__((weak)) returnHook(void)  {
+	while(1);
+}
+
+//Esta funcion no debe bajo ninguna circunstancia utilizar APIs del OS dado
+//	 			que podria dar lugar a un nuevo scheduling.
+
+void __attribute__((weak)) tickHook(void)  {
+	__asm volatile( "nop" );
+}
+
+//Puntero a la funcion donde fue llamado errorHook. Implementado solo a
+//  					fines de trazabilidad de errores
+
+void __attribute__((weak)) errorHook(void *caller)  {
+	/*
+	 * Revisar el contenido de control_OS.error para obtener informacion. Utilizar os_getError()
+	 */
+	while(1);
+}
+
+
+     /*   Inicializa una tarea para que pueda correr en el OS implementado.
+        Es necesario llamar a esta funcion para cada tarea antes que inicie
+        el OS.
+     
+	   @param *entryPoint:		Puntero a la tarea que se desea inicializar.
+	   @param *task:	   		Puntero a la estructura de control que sera utilizada para
+	   						la tarea que se esta inicializando.
+      */
 void os_InitTarea(void *entryPoint, tarea *task)  {
 	static uint8_t id = 0;				//el id sera correlativo a medida que se generen mas tareas
 
 	/*
-	 * Al principio se efectua un pequeÃ±o checkeo para determinar si llegamos a la cantidad maxima de
+	 * Al principio se efectua un pequeño checkeo para determinar si llegamos a la cantidad maxima de
 	 * tareas que pueden definirse para este OS. En el caso de que se traten de inicializar mas tareas
 	 * que el numero maximo soportado, se guarda un codigo de error en la estructura de control del OS
 	 * y la tarea no se inicializa.
@@ -34,6 +54,7 @@ void os_InitTarea(void *entryPoint, tarea *task)  {
 
 		task->stack[STACK_SIZE/4 - XPSR] = INIT_XPSR;					//necesario para bit thumb
 		task->stack[STACK_SIZE/4 - PC_REG] = (uint32_t)entryPoint;		//direccion de la tarea (ENTRY_POINT)
+      task->stack[STACK_SIZE/4 - LR] = (uint32_t)returnHook;			//esto no debería darse. 
 
 
 		/*
@@ -68,7 +89,13 @@ void os_InitTarea(void *entryPoint, tarea *task)  {
 
 	else {
 		control_OS.error = ERR_OS_CANT_TAREAS;		//excedimos la cantidad de tareas posibles
-	}
+      /*
+		 * En el caso que se hayan excedido la cantidad de tareas que se pueden definir, se actualiza
+		 * el ultimo error generado en la estructura de control del OS y se llama a errorHook y se
+		 * envia informacion de quien es quien la invoca.
+		 */      
+      errorHook(os_InitTarea);
+      }
 }
 
 
@@ -113,7 +140,21 @@ void os_Init(void)  {
 	}
 }
 
-
+/*************************************************************************************************
+	 *  @brief Extrae el codigo de error de la estructura de control del OS.
+     *
+     *  @details
+     *   La estructura de control del OS no es visible al usuario, por lo que se facilita una API
+     *   para extraer el ultimo codigo de error ocurrido, para su posterior tratamiento. Esta
+     *   funcion puede ser utilizada dentro de errorHook
+     *
+	 *  @param 		None.
+	 *  @return     Ultimo error ocurrido dentro del OS.
+	 *  @see errorHook
+***************************************************************************************************/
+int32_t os_getError(void)  {
+	return control_OS.error;
+}
 
 /*************************************************************************************************
 	 *  @brief Funcion que efectua las decisiones de scheduling.
@@ -175,6 +216,13 @@ void SysTick_Handler(void)  {
 
 	scheduler();
 
+
+   /*
+	 * Luego de determinar cual es la tarea siguiente segun el scheduler, se ejecuta la funcion
+	 * tickhook.
+	 */
+
+   tickHook();
 	/**
 	 * Se setea el bit correspondiente a la excepcion PendSV
 	 */

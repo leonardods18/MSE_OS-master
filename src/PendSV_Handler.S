@@ -48,3 +48,14 @@ PendSV_Handler:
 	pop {r4-r11,lr}			//Recuperados todos los valores de registros
 	bx lr					//se hace un branch indirect con el valor de LR que es nuevamente EXEC_RETURN
 
+   /*
+	* Habiendo hecho el cambio de contexto y recuperado los valores de los registros, es necesario
+	* determinar si el contexto tiene guardados registros correspondientes a la FPU. si este es el caso
+	* se hace el unstacking de los que se hizo PUSH manualmente.
+	*/
+/*
+*	tst lr,0x10
+*	it eq
+*	vpopeq {s16-s31}
+*	bx lr					//se hace un branch indirect con el valor de LR que es nuevamente EXEC_RETURN
+*/

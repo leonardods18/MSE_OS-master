@@ -65,7 +65,7 @@
 #define FULL_STACKING_SIZE 			17	//16 core registers + valor previo de LR
 
 #define TASK_NAME_SIZE				10	//tamaño array correspondiente al nombre
-#define MAX_TASK_COUNT				8	//cantidad maxima de tareas para este OS
+#define MAX_TASK_COUNT				10	//cantidad maxima de tareas para este OS
 
 
 
