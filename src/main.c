@@ -1,3 +1,9 @@
+/*
+* Profesor: Gonzalo Sanchez.
+* Alumno: Del Sancio, Leonardo.
+* main.c
+ */
+
 /*==================[inclusions]=============================================*/
 
 #include "main.h"
@@ -7,17 +13,25 @@
 #include "MSE_OS_Core.h"
 
 #include "sapi.h"  
+
+#include "MSE_OS_API.h"
+
+#include "perifericos.h"
 /*==================[macros and definitions]=================================*/
 
 #define MILISEC		1000
-
 #define tiempo		10000000
+#define PRIORIDAD_0		0
+#define PRIORIDAD_1		1
+#define PRIORIDAD_2		2
+#define PRIORIDAD_3		3
+
 /*==================[Global data declaration]==============================*/
 
 
-tarea g_sTarea1, g_sTarea2,g_sTarea3;
-tarea g_sTarea4, g_sTarea5,g_sTarea6;
-tarea g_sTarea7, g_sTarea8,g_sTarea9;
+tarea g_sTarea1, g_sTarea2,g_sTarea3; // le damos prioridad 0
+tarea g_sTarea4, g_sTarea5,g_sTarea6; // prioridad 1
+tarea g_sTarea7, g_sTarea8,g_sTarea9; // prioridad 3
 
 /*==================[internal functions declaration]=========================*/
 
@@ -28,15 +42,6 @@ tarea g_sTarea7, g_sTarea8,g_sTarea9;
 /*==================[macros]=================================================*/
 
 
-#define LED_ROJO  0
-#define LED_VERDE 1
-#define LED_AZUL  2
-#define LED_1     3
-#define LED_2     4
-#define LED_3     5
-
-
-
 /*==================[internal functions definition]==========================*/
 
 /** @brief hardware initialization function
@@ -45,7 +50,7 @@ tarea g_sTarea7, g_sTarea8,g_sTarea9;
 static void initHardware(void)  {
 	Board_Init();
 	SystemCoreClockUpdate();
-	SysTick_Config(SystemCoreClock / MILISEC);		//systick 1ms
+	SysTick_Config(SystemCoreClock / MILISEC);		//systick de 1ms
 }
 
 
@@ -164,15 +169,17 @@ int main(void)  {
    //boardConfig		 (							);
    uartConfig		 ( UART_USB, 115200			);
    
-	os_InitTarea(tarea1, &g_sTarea1);
-   os_InitTarea(tarea2, &g_sTarea2);
-	os_InitTarea(tarea3, &g_sTarea3);
-   os_InitTarea(tarea4, &g_sTarea4);
-   os_InitTarea(tarea5, &g_sTarea5);
-   os_InitTarea(tarea6, &g_sTarea6);
-   os_InitTarea(tarea7, &g_sTarea7);
-   os_InitTarea(tarea8, &g_sTarea8);
-   os_InitTarea(tarea9, &g_sTarea9);
+
+   os_InitTarea(tarea1, &g_sTarea1,PRIORIDAD_0);
+	os_InitTarea(tarea2, &g_sTarea2,PRIORIDAD_0);
+	os_InitTarea(tarea3, &g_sTarea3,PRIORIDAD_0);
+   os_InitTarea(tarea4, &g_sTarea4,PRIORIDAD_1);
+	os_InitTarea(tarea5, &g_sTarea5,PRIORIDAD_1);
+	os_InitTarea(tarea6, &g_sTarea6,PRIORIDAD_1);
+	os_InitTarea(tarea7, &g_sTarea7,PRIORIDAD_3);
+   os_InitTarea(tarea8, &g_sTarea8,PRIORIDAD_3);
+   os_InitTarea(tarea9, &g_sTarea9,PRIORIDAD_3);
+
 
 	os_Init();
 
