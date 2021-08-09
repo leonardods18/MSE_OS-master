@@ -11,8 +11,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "board.h"
-
-#define STACK_SIZE 256
+#include "MSE_OS_Tareas.h"
 
 
 /************************************************************************************
@@ -56,10 +55,6 @@
 #define STACK_FRAME_SIZE			8
 #define FULL_STACKING_SIZE 			17	//16 core registers + valor previo de LR
 
-#define TASK_NAME_SIZE				10	
-#define MAX_TASK_COUNT				10	
-
-
 
 /*==================[definicion codigos de error de OS]=================================*/
 
@@ -67,12 +62,6 @@
 #define MIN_PRIORITY		3			
 
 #define PRIORITY_COUNT		(MIN_PRIORITY-MAX_PRIORITY)+1	//cantidad de prioridades asignables
-/*==================[definicion de datos para el OS]=================================*/
-
-#define ERR_OS_CANT_TAREAS		-1
-#define ERR_OS_SCHEDULING		-2
-
-
 
 /********************************************************************************
  * Definicion de los estados posibles de nuestro OS
@@ -84,35 +73,6 @@ enum _estadoOS  {
 };
 
 typedef enum _estadoOS estadoOS;
-
-/********************************************************************************
- * Definicion de los estados posibles para las tareas
- *******************************************************************************/
-
-enum _estadoTarea  {
-	TAREA_READY,
-	TAREA_RUNNING,
-   TAREA_BLOCKED // tarea bloqueada
-};
-
-typedef enum _estadoTarea estadoTarea;
-
-
-
-/********************************************************************************
- * Definicion de la estructura para cada tarea
- *******************************************************************************/
-struct _tarea  {
-	uint32_t stack[STACK_SIZE/4];
-	uint32_t stack_pointer;
-	void *entry_point;
-	uint8_t id;
-	estadoTarea estado;
-	uint8_t prioridad;
-	uint32_t ticks_bloqueada;
-};
-
-typedef struct _tarea tarea;
 
 
 

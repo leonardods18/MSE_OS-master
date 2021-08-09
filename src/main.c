@@ -16,7 +16,13 @@
 
 #include "MSE_OS_API.h"
 
+#include "MSE_OS_Semaforos.h"
+
 #include "perifericos.h"
+
+#include "MSE_OS_Tareas.h"
+
+
 /*==================[macros and definitions]=================================*/
 
 #define MILISEC		1000

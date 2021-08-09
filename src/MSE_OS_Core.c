@@ -5,7 +5,7 @@
  */
 
 #include "MSE_OS_Core.h"
-
+#include "MSE_OS_Tareas.h"
 
 
 /*==================[definicion de variables globales]=================================*/
