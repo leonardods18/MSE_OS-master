@@ -1,9 +1,9 @@
-# Sistema medidor de flancos
+# Sistema medidor de tiempo para flancos
 
 Examen MSE 2021
-Implementar un medidor de flancos para la materia IMPLEMENTACIÓN DE SISTEMAS OPERATIVOS. 
+IMPLEMENTACIÓN DE SISTEMAS OPERATIVOS. 
 
-## Requisitos ð
+## Requisitos 
 
 Implemente un sistema que mida la diferencia de tiempos entre flancos positivos y negativos
 generados por dos pulsos, cuyas ocurrencias se solapen temporalmente, segÃºn se muestra en la
@@ -25,7 +25,7 @@ Led Azul encendido:\n\r
 \t Tiempo entre flancos descendentes: 873 ms \n\r
 \t Tiempo entre flancos ascendentes: 996 ms \n\r
 
-## Aclaraciones ð
+## Aclaraciones 
 
 Importante:
 
@@ -33,15 +33,15 @@ Importante:
  *  	 Si se presiona una tecla, pasando un tiempo t se presiona la otra, luego una de las 2 se suelta y vuelve a presionar sin soltar la otra, el sistema enviará mensaje de error por UART.
 
  
-## Pruebas de funcionamiento âï¸
+## Pruebas de funcionamiento
 
 Imágenes del funcionamiento:
 
 
-## Construido ð ï¸
+![funcionamiento](https://user-images.githubusercontent.com/59117988/129645980-e02eec4b-4a3a-4ad5-b3f8-5941bbe9ccd5.JPG)
+
+## Construido
 
 Autor: Del Sancio Leonardo Daniel.
 Profesor: Sanchez Gonzalo.
-
-![funcionamiento](https://user-images.githubusercontent.com/59117988/129645980-e02eec4b-4a3a-4ad5-b3f8-5941bbe9ccd5.JPG)
 
