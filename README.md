@@ -38,10 +38,12 @@ Importante:
 Imágenes del funcionamiento:
 
 
-![funcionamiento](https://user-images.githubusercontent.com/59117988/129645980-e02eec4b-4a3a-4ad5-b3f8-5941bbe9ccd5.JPG)
+![funcionamiento](https://user-images.githubusercontent.com/59117988/129646457-48af79c9-59cd-4e57-946e-85dc598c185b.JPG)
+
 
 ## Construido
 
 Autor: Del Sancio Leonardo Daniel.
+
 Profesor: Sanchez Gonzalo.
 
