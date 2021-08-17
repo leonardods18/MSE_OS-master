@@ -1,42 +1,40 @@
 /*
- * main.h
+ * os_semaforos.h
  * Examen ISO 2021 Maestría en sistemas embebidos
  * Autor: Del Sancio, Leonardo
  */
 
-#ifndef _MAIN_H_
-#define _MAIN_H_
 
+#ifndef _OS_SEMAFORO_H_
+#define _OS_SEMAFORO_H_
 
 /*==================[inclusions]=============================================*/
 
-/*==================[cplusplus]==============================================*/
+#include "os_tareas.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <stdint.h>
 
 /*==================[macros]=================================================*/
 
-#define _PULSADORES_HABILITADOS_	2
-#define _LONG_LINEA_UART_			256
+/** invalid event definition TODO: redefina esta macro a su criterio */
+#define INVALID_EVENT NULL
 
 /*==================[typedef]================================================*/
+
+typedef struct {
+	uint32_t tomado;
+	TaskParameters_t * tarea;
+} Semaforo_t;
 
 /*==================[external data declaration]==============================*/
 
 /*==================[external functions declaration]=========================*/
 
-/** @brief main function
- * @return main function should never return
- */
-int main(void);
+void semaforo_init(Semaforo_t * t);
 
-/*==================[cplusplus]==============================================*/
+void semaforo_take(Semaforo_t * t);
 
-#ifdef __cplusplus
-}
-#endif
+void semaforo_give(Semaforo_t * t);
 
 /*==================[end of file]============================================*/
-#endif /* #ifndef _MAIN_H_ */
+#endif /* #ifndef _OS_SEMAFORO_H_ */

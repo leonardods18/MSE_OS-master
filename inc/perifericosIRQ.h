@@ -1,14 +1,16 @@
 /*
- * main.h
+ * perifericos.h
  * Examen ISO 2021 Maestría en sistemas embebidos
  * Autor: Del Sancio, Leonardo
  */
 
-#ifndef _MAIN_H_
-#define _MAIN_H_
+#ifndef _PERIFERICOS_H_
+#define _PERIFERICOS_H_
 
 
 /*==================[inclusions]=============================================*/
+
+#include <stdint.h>
 
 /*==================[cplusplus]==============================================*/
 
@@ -18,19 +20,28 @@ extern "C" {
 
 /*==================[macros]=================================================*/
 
-#define _PULSADORES_HABILITADOS_	2
-#define _LONG_LINEA_UART_			256
+#define LED_1     3
+#define LED_2     4
+#define LED_3     5
+#define LED_ROJO  0
+#define LED_VERDE 1
+#define LED_AZUL  2
 
 /*==================[typedef]================================================*/
+
+typedef enum { PULSADOR_1, 
+               PULSADOR_2, 
+               PULSADOR_3, 
+               PULSADOR_4 } 
+                              pulsadores_e;
 
 /*==================[external data declaration]==============================*/
 
 /*==================[external functions declaration]=========================*/
 
-/** @brief main function
- * @return main function should never return
- */
-int main(void);
+void Perifericos_Init(void);
+void Pulsadores_Init(void);
+uint8_t Periferico_Get_Pulsador(uint8_t pulsador);
 
 /*==================[cplusplus]==============================================*/
 
@@ -39,4 +50,4 @@ int main(void);
 #endif
 
 /*==================[end of file]============================================*/
-#endif /* #ifndef _MAIN_H_ */
+#endif /* #ifndef _PERIFERICOS_H_ */
