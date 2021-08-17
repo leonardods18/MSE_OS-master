@@ -280,7 +280,7 @@ int main(void) {
 	pulsador_inicializar(&pulsador[1], PULSADOR_2);
 
 	char str[50];
-	strcpy(str, "\n\r\n\rBIENVENIDOS - SISTEMA MEDIDOR DE FLANCOS\r\n");
+	strcpy(str, "\n\r\n\rBIENVENIDO - SISTEMA MEDIDOR DE FLANCOS\r\n");
 	uartSend(str, strlen(str));
 
 	
