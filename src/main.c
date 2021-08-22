@@ -36,6 +36,15 @@ enum estados_pulsadores {
 
 /*==================[internal data declaration]==============================*/
 
+struct _dataLed{
+	uint8_t Led;				// led a encender puede ser LEDS_VERDE, LEDS_ROJO ,
+								// LEDS_AMARILLO o LEDS_RGB_AZUL
+	uint16_t delta_suma;
+
+};
+
+typedef struct _dataLed dataLed;
+
 typedef struct {
 	pulsadores_e pulsador;
 	uint8_t estado;
@@ -65,6 +74,8 @@ void * tarea_notificar_UART(void * arg);
 Semaforo_t s_actualizar_pulsador_1;
 Semaforo_t s_actualizar_pulsador_2;
 Semaforo_t s_notificar_UART;
+
+osCola bufferLed;	
 
 /*==================[external data definition]===============================*/
 
@@ -158,7 +169,8 @@ void * tarea_actualizar_pulsador_1(void * arg) {
 }
 
 void * tarea_actualizar_pulsador_2(void * arg) {
-	while (1) {
+	
+   while (1) {
 
 		semaforo_take(&s_actualizar_pulsador_2);
 
@@ -188,6 +200,11 @@ void * tarea_actualizar_pulsador_2(void * arg) {
 
 void analizar_pulsadores(void){
 
+
+	dataLed datoToLed;
+	uint8_t statusLedAux;
+
+
 	if (pulsador[0].estado == stSUELTO && pulsador[1].estado == stSUELTO){
 
 		int tiempo_total = 0;
@@ -214,11 +231,16 @@ void analizar_pulsadores(void){
 				tiempo_entre_flancos_descendentes = pulsador[1].tiempo_inicio_flanco_descendente - pulsador[0].tiempo_inicio_flanco_descendente;
 				if ( pulsador[0].tiempo_inicio_flanco_ascendente <= pulsador[1].tiempo_inicio_flanco_ascendente ){					
 					strcpy(str1, "Led Verde encendido: \n\r");
-					Board_LED_Set(LED_3, TRUE);
-					tiempo_entre_flancos_ascendentes = pulsador[1].tiempo_inicio_flanco_ascendente - pulsador[0].tiempo_inicio_flanco_ascendente;
+					statusLedAux=LED_3;
+               
+               // escribo en la cola
+               os_ColaWrite(&bufferLed,&datoToLed);               
+					
+               tiempo_entre_flancos_ascendentes = pulsador[1].tiempo_inicio_flanco_ascendente - pulsador[0].tiempo_inicio_flanco_ascendente;
 				}else{					
-					strcpy(str1, "Led Rojo encendido: \n\r");
-					Board_LED_Set(LED_2, TRUE);
+					
+               strcpy(str1, "Led Rojo encendido: \n\r");
+					statusLedAux=LED_2;               
 					tiempo_entre_flancos_ascendentes = pulsador[0].tiempo_inicio_flanco_ascendente - pulsador[1].tiempo_inicio_flanco_ascendente;
 				}
 			}else{
@@ -226,16 +248,22 @@ void analizar_pulsadores(void){
 				tiempo_entre_flancos_descendentes = pulsador[0].tiempo_inicio_flanco_descendente - pulsador[1].tiempo_inicio_flanco_descendente; // azul o amarillo
 				if ( pulsador[1].tiempo_inicio_flanco_ascendente <= pulsador[0].tiempo_inicio_flanco_ascendente ){					
 					strcpy(str1, "Led Azul encendido: \n\r");
-					Board_LED_Set(LED_AZUL, TRUE);
+               statusLedAux=LED_AZUL;					
 					tiempo_entre_flancos_ascendentes = pulsador[0].tiempo_inicio_flanco_ascendente - pulsador[1].tiempo_inicio_flanco_ascendente;
 				}else{					
-					strcpy(str1, "Led Amarillo encendido: \n\r");
-					Board_LED_Set(LED_1, TRUE);
+					strcpy(str1, "Led Amarillo encendido: \n\r");					
+               statusLedAux=LED_1;
 					tiempo_entre_flancos_ascendentes = pulsador[1].tiempo_inicio_flanco_ascendente - pulsador[0].tiempo_inicio_flanco_ascendente;
 				}
 			}
 			tiempo_total =  tiempo_entre_flancos_ascendentes + tiempo_entre_flancos_descendentes;
 
+         if(statusLedAux!=0){
+			// Informo que se enciendan los led
+			datoToLed.delta_suma=tiempo_total;
+			datoToLed.Led=statusLedAux;			
+            
+         }
 			sprintf(str2,"\t Tiempo encendido: %d ms\n\r", tiempo_total);
 			strcat(str1, str2);
 			sprintf(str2,"\t Tiempo entre flancos descendentes: %d ms\n\r", tiempo_entre_flancos_descendentes);
@@ -245,12 +273,6 @@ void analizar_pulsadores(void){
 		}
 		semaforo_give(&s_notificar_UART);
 
-		task_delay(tiempo_total);		
-		Board_LED_Set(LED_3, FALSE);	
-		Board_LED_Set(LED_2, FALSE);	
-		Board_LED_Set(LED_1, FALSE);	
-		Board_LED_Set(LED_AZUL, FALSE);	
-//
 		pulsador[0].error = 0;
 		pulsador[1].error = 0;
 		pulsador[0].tiempo_inicio_flanco_ascendente = 0;
@@ -267,6 +289,19 @@ void * tarea_notificar_UART(void * arg) {
 		uartSend(str1, strlen(str1));
 	}
 }
+
+void tareaLed(void)  {
+	dataLed datoToLed;
+
+	while (1) {
+      //leo la cola
+		os_ColaRead(&bufferLed,&datoToLed);
+		Board_LED_Set(datoToLed.Led,TRUE);
+		task_delay(datoToLed.delta_suma);
+		Board_LED_Set(datoToLed.Led,FALSE);
+	}
+}
+
 
 /*==================[external functions definition]==========================*/
 
@@ -292,6 +327,8 @@ int main(void) {
 	semaforo_init(&s_actualizar_pulsador_2);
 	semaforo_init(&s_notificar_UART);
 	
+   os_ColaInit(&bufferLed,sizeof(dataLed));
+   
 	initOS();
 
 	while (1) {

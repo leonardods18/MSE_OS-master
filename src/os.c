@@ -217,6 +217,9 @@ void * task_idle(void * arg) {
 	}
 }
 
+
+
+
 /*==================[external functions definition]==========================*/
 /*************************************************************************************************
 	 *  @brief Inicializa el OS.
@@ -240,8 +243,7 @@ void initOS(void) {
 	tareaIDLE.estado = eReady;
 
 	init_stack(tareaIDLE.stack, tareaIDLE.stack_size_b, &tareaIDLE.sp,
-			tareaIDLE.entry_point, tareaIDLE.arg);
-	
+	tareaIDLE.entry_point, tareaIDLE.arg);
 	bzero(tareasPrioMAX, maximas_tareas);
 	bzero(tareasPrioMED, maximas_tareas);
 	bzero(tareasPrioMIN, maximas_tareas);
@@ -291,5 +293,8 @@ void fin_SeccionCritica(void){
 	__enable_irq();
 }
 
+void os_CpuYield(void)  {
+	schedule();
+}
 /*==================[end of file]============================================*/
 

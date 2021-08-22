@@ -51,7 +51,7 @@
 
 #define PRIORITY_COUNT		(MIN_PRIORITY-MAX_PRIORITY)+1	//cantidad de prioridades asignables
 
-#define QUEUE_HEAP_SIZE		64			//cantidad de bytes reservados por cada cola definida
+
 
 /*==================[cplusplus]==============================================*/
 
@@ -75,7 +75,7 @@ TaskParameters_t * get_current_task(void);
 void schedule(void);
 void ini_SeccionCritica(void);
 void fin_SeccionCritica(void);
-
+void os_CpuYield(void);
 /*==================[cplusplus]==============================================*/
 
 #ifdef __cplusplus

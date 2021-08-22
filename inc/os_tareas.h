@@ -34,6 +34,14 @@ typedef enum {
 	eWaiting, 
 } eTaskState;
 
+enum _estadoOS  {
+	OS_FROM_RESET,				//inicio luego de un reset
+	OS_NORMAL_RUN,				//estado del sistema corriendo una tarea
+	OS_SCHEDULING,				//el OS esta efectuando un scheduling
+	OS_IRQ_RUN					//El OS esta corriendo un Handler
+
+};
+
 typedef enum {
 	ePrioMAX = 1,
 	ePrioMED,
